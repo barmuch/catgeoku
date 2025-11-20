@@ -151,10 +151,10 @@ export default function AboutPage() {
               Today, catgeoku combines cutting-edge web technologies with proven 
               engineering methodologies to deliver interactive tools, educational 
               content, and a vibrant community of professionals pushing the boundaries 
-              of what's possible in our field.
+              of what&apos;s possible in our field.
             </p>
             <p>
-              We're just getting started, and we're excited to have you join us on 
+              We&apos;re just getting started, and we&apos;re excited to have you join us on 
               this journey of continuous learning and innovation.
             </p>
           </div>

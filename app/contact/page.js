@@ -41,7 +41,7 @@ export default function ContactPage() {
           </h1>
           <p className="text-xl text-primary-200 max-w-2xl mx-auto">
             Have a question, suggestion, or need custom engineering software? 
-            We'd love to hear from you.
+            We&apos;d love to hear from you.
           </p>
         </div>
       </section>
@@ -112,7 +112,7 @@ export default function ContactPage() {
                       Message sent successfully!
                     </p>
                     <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                      We'll get back to you as soon as possible.
+                      We&apos;ll get back to you as soon as possible.
                     </p>
                   </div>
                 </div>
