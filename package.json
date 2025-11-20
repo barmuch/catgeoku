@@ -1,0 +1,40 @@
+{
+  "name": "catgeoku",
+  "version": "2.0.0",
+  "description": "Engineering Tools & Knowledge Platform for Geological, Geophysical, Drilling, and Petroleum Engineers",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@react-three/drei": "^9.96.0",
+    "@react-three/fiber": "^8.15.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "critters": "^0.0.23",
+    "framer-motion": "^11.18.2",
+    "gray-matter": "^4.0.3",
+    "katex": "^0.16.9",
+    "lucide-react": "^0.344.0",
+    "next": "^14.2.0",
+    "plotly.js": "^2.35.3",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-plotly.js": "^2.6.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
+    "remark": "^15.0.1",
+    "remark-html": "^16.0.1",
+    "remark-math": "^6.0.0",
+    "three": "^0.161.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.0",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1"
+  }
+}
