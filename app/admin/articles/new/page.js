@@ -36,7 +36,7 @@ export default function NewArticlePage() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/api/admin/categories');
+      const response = await fetch('/api/categories');
       const data = await response.json();
 
       if (response.ok) {
