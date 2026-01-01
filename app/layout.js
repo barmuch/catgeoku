@@ -1,8 +1,9 @@
 import { Inter, Poppins, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
+import ConditionalLayout from '@/components/layout/ConditionalLayout'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import { LanguageProvider } from '@/components/providers/LanguageProvider'
+import { AdminProvider } from '@/components/providers/AdminProvider'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -80,13 +81,13 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable}`}>
       <body>
         <ThemeProvider>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <LanguageProvider>
+            <AdminProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+            </AdminProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

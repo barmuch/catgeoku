@@ -8,27 +8,27 @@ import 'katex/dist/katex.min.css'
 import 'highlight.js/styles/github-dark.css'
 
 export async function generateStaticParams() {
-  const posts = getAllPosts()
+  const posts = await getAllPosts()
   return posts.map((post) => ({
     slug: post.slug,
   }))
 }
 
 export async function generateMetadata({ params }) {
-  const post = getPostBySlug(params.slug)
+  const post = await getPostBySlug(params.slug)
   if (!post) return {}
   return generatePostMetadata(post)
 }
 
 export default async function PostPage({ params }) {
-  const post = getPostBySlug(params.slug)
+  const post = await getPostBySlug(params.slug)
 
   if (!post) {
     notFound()
   }
 
   const contentHtml = await markdownToHtml(post.content)
-  const relatedPosts = getRelatedPosts(post.slug, post.category)
+  const relatedPosts = await getRelatedPosts(post.slug, post.category)
   const structuredData = generateStructuredData(post)
 
   return (

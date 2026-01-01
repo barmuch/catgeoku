@@ -4,36 +4,11 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Menu, X, ChevronDown, Moon, Sun } from 'lucide-react'
+import { Menu, X, ChevronDown, Moon, Sun, LayoutDashboard } from 'lucide-react'
 import { useTheme } from '@/components/providers/ThemeProvider'
-
-const categories = [
-  {
-    name: 'Geology',
-    href: '/geology',
-    description: 'Geological engineering and earth sciences'
-  },
-  {
-    name: 'Geophysics',
-    href: '/geophysics',
-    description: 'Geophysical methods and analysis'
-  },
-  {
-    name: 'Drilling Engineering',
-    href: '/drilling-engineering',
-    description: 'Drilling operations and technology'
-  },
-  {
-    name: 'Petroleum Engineering',
-    href: '/petroleum-engineering',
-    description: 'Oil and gas reservoir engineering'
-  },
-  {
-    name: 'Science',
-    href: '/science',
-    description: 'Scientific research and discoveries'
-  }
-]
+import { useLanguage } from '@/components/providers/LanguageProvider'
+import { useAdmin } from '@/components/providers/AdminProvider'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher'
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -41,6 +16,36 @@ export default function Navbar() {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
   const pathname = usePathname()
   const { theme, toggleTheme } = useTheme()
+  const { t } = useLanguage()
+  const { isAdmin } = useAdmin()
+
+  const categories = [
+    {
+      name: t('categories.geology.name'),
+      href: '/geology',
+      description: t('categories.geology.description')
+    },
+    {
+      name: t('categories.geophysics.name'),
+      href: '/geophysics',
+      description: t('categories.geophysics.description')
+    },
+    {
+      name: t('categories.drilling.name'),
+      href: '/drilling-engineering',
+      description: t('categories.drilling.description')
+    },
+    {
+      name: t('categories.petroleum.name'),
+      href: '/petroleum-engineering',
+      description: t('categories.petroleum.description')
+    },
+    {
+      name: t('categories.science.name'),
+      href: '/science',
+      description: t('categories.science.description')
+    }
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,8 +60,8 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/90 dark:bg-primary-900/90 backdrop-blur-md shadow-lg'
-          : 'bg-white dark:bg-primary-900'
+          ? 'bg-white/90 dark:bg-primary-900/90 backdrop-blur-md shadow-lg border-b border-primary-200 dark:border-primary-800'
+          : 'bg-white dark:bg-primary-900 border-b border-primary-200 dark:border-primary-800'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -88,7 +93,7 @@ export default function Navbar() {
                   : 'text-primary-700 dark:text-primary-200 hover:text-accent-600 dark:hover:text-accent-400'
               }`}
             >
-              Home
+              {t('nav.home')}
             </Link>
             {/* Events */}
              <Link
@@ -99,7 +104,7 @@ export default function Navbar() {
                   : 'text-primary-700 dark:text-primary-200 hover:text-accent-600 dark:hover:text-accent-400'
               }`}
             >
-              Events
+              {t('nav.events')}
             </Link>
             {/* Categories Dropdown */}
             <div 
@@ -110,7 +115,7 @@ export default function Navbar() {
               <button
                 className="flex items-center space-x-1 font-medium text-primary-700 dark:text-primary-200 hover:text-accent-600 dark:hover:text-accent-400 transition-colors duration-300"
               >
-                <span>Categories</span>
+                <span>{t('nav.categories')}</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
 
@@ -149,7 +154,7 @@ export default function Navbar() {
                   : 'text-primary-700 dark:text-primary-200 hover:text-accent-600 dark:hover:text-accent-400'
               }`}
             >
-              About
+              {t('nav.about')}
             </Link>
 
             <Link
@@ -160,10 +165,26 @@ export default function Navbar() {
                   : 'text-primary-700 dark:text-primary-200 hover:text-accent-600 dark:hover:text-accent-400'
               }`}
             >
-              Contact
+              {t('nav.contact')}
             </Link>
 
-           
+            {/* Admin Dashboard Link - Only visible when logged in */}
+            {isAdmin && (
+              <Link
+                href="/admin/dashboard"
+                className={`flex items-center space-x-1 font-medium transition-colors duration-300 ${
+                  pathname?.startsWith('/admin')
+                    ? 'text-accent-600 dark:text-accent-400'
+                    : 'text-primary-700 dark:text-primary-200 hover:text-accent-600 dark:hover:text-accent-400'
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Dashboard</span>
+              </Link>
+            )}
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Theme Toggle */}
             <button
@@ -217,12 +238,12 @@ export default function Navbar() {
               className="block py-2 font-medium text-primary-700 dark:text-primary-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Home
+              {t('nav.home')}
             </Link>
 
             <div className="space-y-2">
               <div className="font-semibold text-primary-900 dark:text-white mb-2">
-                Categories
+                {t('nav.categories')}
               </div>
               {categories.map((category) => (
                 <Link
@@ -245,11 +266,19 @@ export default function Navbar() {
             </Link>
 
             <Link
+              href="/about"
+              className="block py-2 font-medium text-primary-700 dark:text-primary-200"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {t('nav.about')}
+            </Link>
+
+            <Link
               href="/contact"
               className="block py-2 font-medium text-primary-700 dark:text-primary-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Contact
+              {t('nav.contact')}
             </Link>
 
             <Link
@@ -257,8 +286,20 @@ export default function Navbar() {
               className="block py-2 font-medium text-primary-700 dark:text-primary-200"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Events
+              {t('nav.events')}
             </Link>
+
+            {/* Admin Dashboard Link for Mobile */}
+            {isAdmin && (
+              <Link
+                href="/admin/dashboard"
+                className="flex items-center space-x-2 py-2 font-medium text-accent-600 dark:text-accent-400"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Dashboard</span>
+              </Link>
+            )}
           </div>
         </div>
       )}

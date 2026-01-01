@@ -5,8 +5,9 @@ import FeaturedCategories from '@/components/home/FeaturedCategories'
 import Newsletter from '@/components/home/Newsletter'
 import { getAllPosts } from '@/lib/posts'
 
-export default function Home() {
-  const latestPosts = getAllPosts().slice(0, 6)
+export default async function Home() {
+  const allPosts = await getAllPosts()
+  const latestPosts = allPosts.slice(0, 6)
 
   return (
     <>

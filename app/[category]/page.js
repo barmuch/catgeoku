@@ -47,9 +47,9 @@ export function generateMetadata({ params }) {
   }
 }
 
-export default function CategoryPage({ params }) {
+export default async function CategoryPage({ params }) {
   const data = categoryData[params.category]
-  const posts = getPostsByCategory(params.category)
+  const posts = await getPostsByCategory(params.category)
 
   if (!data) {
     return <div>Category not found</div>

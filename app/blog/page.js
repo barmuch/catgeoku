@@ -8,9 +8,9 @@ export const metadata = {
   description: 'Browse all engineering articles, tutorials, and technical resources on geology, geophysics, drilling, and petroleum engineering.',
 }
 
-export default function BlogPage() {
-  const allPosts = getAllPosts()
-  const categories = getAllCategories()
+export default async function BlogPage() {
+  const allPosts = await getAllPosts()
+  const categories = await getAllCategories()
 
   return (
     <div className="min-h-screen bg-primary-50 dark:bg-primary-950 pt-20">

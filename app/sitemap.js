@@ -1,7 +1,7 @@
 import { getAllPosts } from '@/lib/posts'
 
-export default function sitemap() {
-  const posts = getAllPosts()
+export default async function sitemap() {
+  const posts = await getAllPosts()
   const baseUrl = 'https://catgeoku.com'
 
   const postUrls = posts.map((post) => ({
