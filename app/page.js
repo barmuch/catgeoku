@@ -5,6 +5,9 @@ import FeaturedCategories from '@/components/home/FeaturedCategories'
 import Newsletter from '@/components/home/Newsletter'
 import { getAllPosts } from '@/lib/posts'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function Home() {
   const allPosts = await getAllPosts()
   const latestPosts = allPosts.slice(0, 6)

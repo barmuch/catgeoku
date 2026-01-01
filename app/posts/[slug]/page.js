@@ -7,6 +7,9 @@ import { Calendar, Clock, User, ArrowLeft, ArrowRight, Tag } from 'lucide-react'
 import 'katex/dist/katex.min.css'
 import 'highlight.js/styles/github-dark.css'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function generateStaticParams() {
   const posts = await getAllPosts()
   return posts.map((post) => ({

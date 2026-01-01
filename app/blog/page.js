@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { getAllPosts, getAllCategories } from '@/lib/posts'
 import { Calendar, Clock, ArrowRight, Search, Filter } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata = {
   title: 'Blog - All Articles',
   description: 'Browse all engineering articles, tutorials, and technical resources on geology, geophysics, drilling, and petroleum engineering.',
