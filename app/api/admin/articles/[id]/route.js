@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
     await connectDB();
     const { id } = params;
 
-    const article = await Article.findById(id).populate('categoryId').lean();
+    const article = await Article.findById(id).lean();
 
     if (!article) {
       return NextResponse.json(
@@ -110,7 +110,7 @@ async function updateArticle(request, { params }) {
       id,
       updateData,
       { new: true, runValidators: true }
-    ).populate('categoryId').lean();
+    ).lean();
     
     console.log('Article updated successfully, new content length:', article.content?.length);
 

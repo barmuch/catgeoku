@@ -115,7 +115,7 @@ async function createArticle(request) {
     });
 
     // Populate category
-    await article.populate('categoryId');
+    // Article created successfully
 
     return NextResponse.json(article, { status: 201 });
   } catch (error) {

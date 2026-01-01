@@ -1,34 +1,17 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import Category from '@/lib/models/Category';
-import Article from '@/lib/models/Article';
 
-// GET all categories with article counts
+// GET all categories - static data
 export async function GET() {
   try {
-    await connectDB();
-    
-    const categories = await Category.find().sort({ name: 1 }).lean();
+    const categories = [
+      { id: '1', name: 'Geology', slug: 'geology', description: 'Geological sciences and studies', icon: '🪨', count: 0 },
+      { id: '2', name: 'Geophysics', slug: 'geophysics', description: 'Geophysical exploration and methods', icon: '🌊', count: 0 },
+      { id: '3', name: 'Drilling Engineering', slug: 'drilling-engineering', description: 'Well drilling and completion', icon: '⚙️', count: 0 },
+      { id: '4', name: 'Reservoir Engineering', slug: 'reservoir-engineering', description: 'Reservoir management and production', icon: '🛢️', count: 0 },
+      { id: '5', name: 'Petrophysics', slug: 'petrophysics', description: 'Rock and fluid properties', icon: '📊', count: 0 },
+    ];
 
-    const formattedCategories = await Promise.all(
-      categories.map(async (category) => {
-        const count = await Article.countDocuments({
-          categoryId: category._id,
-          published: true,
-        });
-        
-        return {
-          id: category._id,
-          name: category.name,
-          slug: category.slug,
-          description: category.description,
-          icon: category.icon,
-          count,
-        };
-      })
-    );
-
-    return NextResponse.json({ categories: formattedCategories });
+    return NextResponse.json({ categories });
   } catch (error) {
     console.error('Error fetching categories:', error);
     return NextResponse.json(
