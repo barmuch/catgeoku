@@ -38,7 +38,6 @@ export async function GET(request) {
         .skip(skip)
         .limit(limit)
         .sort({ publishedAt: -1, createdAt: -1 })
-        .populate('categoryId')
         .lean(),
       Article.countDocuments(where),
     ]);
@@ -51,8 +50,8 @@ export async function GET(request) {
       content: article.content,
       coverImage: article.featuredImage || '/images/placeholder.jpg',
       date: article.publishedAt?.toISOString() || article.createdAt.toISOString(),
-      category: article.category || article.categoryId?.name || 'General',
-      categorySlug: article.categoryId?.slug || 'general',
+      category: article.category || 'General',
+      categorySlug: 'general',
       author: article.author || 'CatGeoUku Team',
       readTime: calculateReadTime(article.content),
       tags: article.tags || [],

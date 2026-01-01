@@ -34,7 +34,6 @@ export async function GET(request) {
       Article.find(where)
         .skip(skip)
         .limit(limit)
-        .populate('categoryId')
         .sort({ createdAt: -1 })
         .lean(),
       Article.countDocuments(where),
@@ -44,11 +43,6 @@ export async function GET(request) {
     const formattedArticles = articles.map(article => ({
       ...article,
       id: article._id.toString(),
-      category: article.categoryId ? {
-        id: article.categoryId._id?.toString(),
-        name: article.categoryId.name,
-        slug: article.categoryId.slug,
-      } : null,
     }));
 
     return NextResponse.json({
