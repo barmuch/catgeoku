@@ -17,7 +17,7 @@ export default function EditArticlePage() {
     slug: '',
     excerpt: '',
     content: '',
-    categoryId: '',
+    category: '',
     tags: '',
     author: '',
     published: false,
@@ -55,7 +55,7 @@ export default function EditArticlePage() {
         slug: data.slug || '',
         excerpt: data.excerpt || '',
         content: data.content || '',
-        categoryId: data.categoryId?._id || data.categoryId || '',
+        category: data.category || '',
         tags: data.tags ? data.tags.join(', ') : '',
         author: data.author || '',
         published: data.published || false,
@@ -179,9 +179,9 @@ export default function EditArticlePage() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">Category</label>
-            <select name="categoryId" value={formData.categoryId} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+            <select name="category" value={formData.category} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
               <option value="">Select category</option>
-              {categories.map(cat => <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.name}</option>)}
+              {categories.map(cat => <option key={cat.id || cat._id} value={cat.slug}>{cat.name}</option>)}
             </select>
           </div>
           <div>

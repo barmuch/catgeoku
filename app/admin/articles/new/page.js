@@ -15,7 +15,7 @@ export default function NewArticlePage() {
     slug: '',
     excerpt: '',
     content: '',
-    categoryId: '',
+    category: '',
     tags: '',
     author: '',
     published: false,
@@ -193,19 +193,19 @@ export default function NewArticlePage() {
 
           {/* Category */}
           <div>
-            <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category
             </label>
             <select
-              id="categoryId"
-              name="categoryId"
-              value={formData.categoryId}
+              id="category"
+              name="category"
+              value={formData.category}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             >
               <option value="">Select a category</option>
               {categories.map(cat => (
-                <option key={cat.id || cat._id} value={cat.id || cat._id}>
+                <option key={cat.id || cat._id} value={cat.slug}>
                   {cat.name}
                 </option>
               ))}

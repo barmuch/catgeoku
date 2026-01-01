@@ -76,7 +76,6 @@ async function createArticle(request) {
       content,
       featuredImage,
       published,
-      categoryId,
       category,
       tags,
     } = body;
@@ -108,7 +107,6 @@ async function createArticle(request) {
       featuredImage,
       published: published || false,
       publishedAt: published ? new Date() : null,
-      categoryId: categoryId || null,
       category: category || '',
       author: request.user.username || 'Admin',
       tags: tags || [],
