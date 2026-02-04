@@ -22,11 +22,7 @@ export async function GET(request, { params }) {
     const formattedArticle = {
       ...article,
       id: article._id.toString(),
-      category: article.categoryId ? {
-        id: article.categoryId._id?.toString(),
-        name: article.categoryId.name,
-        slug: article.categoryId.slug,
-      } : null,
+      category: article.category || '',
     };
 
     return NextResponse.json(formattedArticle);
@@ -116,11 +112,7 @@ async function updateArticle(request, { params }) {
     const formattedArticle = {
       ...article,
       id: article._id.toString(),
-      category: article.categoryId ? {
-        id: article.categoryId._id?.toString(),
-        name: article.categoryId.name,
-        slug: article.categoryId.slug,
-      } : null,
+      category: article.category || '',
     };
 
     return NextResponse.json(formattedArticle);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthContext';
 import Link from 'next/link';
@@ -22,18 +22,7 @@ export default function AdminDashboard() {
   const [recentEvents, setRecentEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/admin/login');
-      return;
-    }
-
-    if (user) {
-      fetchDashboardData();
-    }
-  }, [user, authLoading, router]);
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       setLoading(true);
       const headers = getAuthHeaders();
@@ -91,7 +80,7 @@ export default function AdminDashboard() {
       }
 
       // Fetch categories
-      const categoriesRes = await fetch('/api/admin/categories');
+      const categoriesRes = await fetch('/api/categories');
       const categoriesData = await categoriesRes.json();
       if (categoriesRes.ok) {
         setStats(prev => ({
@@ -105,7 +94,18 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthHeaders]);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/admin/login');
+      return;
+    }
+
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [authLoading, fetchDashboardData, router, user]);
 
   if (authLoading || !user) {
     return (

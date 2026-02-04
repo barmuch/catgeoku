@@ -12,7 +12,7 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
-    const categoryId = searchParams.get('categoryId');
+    const category = searchParams.get('category') || '';
     const published = searchParams.get('published');
 
     const skip = (page - 1) * limit;
@@ -24,7 +24,7 @@ export async function GET(request) {
           { excerpt: { $regex: search, $options: 'i' } },
         ],
       }),
-      ...(categoryId && { categoryId }),
+      ...(category && { category }),
       ...(published !== null && published !== undefined && { 
         published: published === 'true' 
       }),

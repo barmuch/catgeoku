@@ -55,7 +55,7 @@ export default function EditArticlePage() {
         slug: data.slug || '',
         excerpt: data.excerpt || '',
         content: data.content || '',
-        category: data.category || '',
+        category: typeof data.category === 'object' ? (data.category?.slug || '') : (data.category || ''),
         tags: data.tags ? data.tags.join(', ') : '',
         author: data.author || '',
         published: data.published || false,
@@ -113,6 +113,7 @@ export default function EditArticlePage() {
       setSaving(true);
       const payload = {
         ...formData,
+        category: typeof formData.category === 'object' ? (formData.category?.slug || '') : (formData.category || ''),
         tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
       };
       

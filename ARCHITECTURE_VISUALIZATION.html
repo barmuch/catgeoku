@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>catgeoku - Architecture Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .diagram-section {
+            margin-bottom: 60px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .diagram-section h2 {
+            color: #1e3c72;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .diagram-section p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .tech-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+
+        .tech-card h3 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .tech-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tech-card li {
+            padding: 5px 0;
+            color: #666;
+        }
+
+        .tech-card li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 5px;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .diagram-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 catgeoku</h1>
+            <p class="subtitle">Architecture Visualization - Engineering Tools & Knowledge Platform</p>
+            <div style="margin-top: 20px;">
+                <span class="badge">Next.js 14</span>
+                <span class="badge">MongoDB</span>
+                <span class="badge">React 18</span>
+                <span class="badge">Three.js</span>
+                <span class="badge">Tailwind CSS</span>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- System Architecture -->
+            <div class="diagram-section">
+                <h2>📐 System Architecture Diagram</h2>
+                <p>Arsitektur lengkap sistem dari Client Layer hingga Database Layer, menunjukkan hubungan antar komponen utama aplikasi.</p>
+                <div class="mermaid">
+graph TB
+    subgraph "Client Layer"
+        Browser[Web Browser]
+        Mobile[Mobile Browser]
+    end
+
+    subgraph "Next.js 14 App Router"
+        subgraph "Public Pages"
+            Home[Home Page<br/>app/page.js]
+            Blog[Blog Listing<br/>app/blog/page.js]
+            BlogPost[Blog Post<br/>app/blog/[slug]/page.js]
+            Events[Events Listing<br/>app/events/page.js]
+            EventDetail[Event Detail<br/>app/events/[slug]/page.js]
+            Category[Category Pages<br/>app/[category]/page.js]
+            About[About Page]
+            Contact[Contact Page]
+            Posts[Posts<br/>app/posts/[slug]/page.js]
+        end
+
+        subgraph "Admin Pages"
+            AdminLogin[Admin Login<br/>app/admin/login/page.js]
+            AdminDash[Dashboard<br/>app/admin/dashboard/page.js]
+            AdminArticles[Articles Management<br/>app/admin/articles/page.js]
+            AdminEvents[Events Management<br/>app/admin/events/page.js]
+            AdminSettings[Settings<br/>app/admin/settings/page.js]
+        end
+
+        subgraph "API Routes"
+            AuthAPI[Authentication API<br/>api/auth/*]
+            AdminAPI[Admin API<br/>api/admin/*]
+            PostsAPI[Posts API<br/>api/posts/*]
+            EventsAPI[Events API<br/>api/events/*]
+            CategoriesAPI[Categories API<br/>api/categories/*]
+        end
+    end
+
+    subgraph "Components Layer"
+        subgraph "Layout Components"
+            Navbar[Navbar]
+            Footer[Footer]
+            ConditionalLayout[Conditional Layout]
+        end
+
+        subgraph "Home Components"
+            Hero[Hero Section]
+            FeaturedCat[Featured Categories]
+            LatestArticles[Latest Articles]
+            ToolsShowcase[Tools Showcase]
+            Newsletter[Newsletter]
+        end
+
+        subgraph "3D Components"
+            SpatialModel[Spatial Model Viewer<br/>Three.js/R3F]
+            IDWVolume[IDW Volume Calculator<br/>Plotly.js]
+        end
+
+        subgraph "Admin Components"
+            AdminSidebar[Admin Sidebar]
+            RichTextEditor[Rich Text Editor<br/>React Quill]
+        end
+
+        subgraph "Common Components"
+            ArticleContent[Article Content]
+            LanguageSwitcher[Language Switcher]
+        end
+    end
+
+    subgraph "Context Providers"
+        ThemeProvider[Theme Provider<br/>Dark/Light Mode]
+        LanguageProvider[Language Provider<br/>10 Languages]
+        AuthContext[Auth Context<br/>JWT Authentication]
+        AdminProvider[Admin Provider]
+    end
+
+    subgraph "Library Layer"
+        Auth[auth.js<br/>JWT Auth Logic]
+        MongoDB[mongodb.js<br/>Connection Manager]
+        Markdown[markdown.js<br/>MD Parser]
+        Posts[posts.js<br/>Posts Utilities]
+        Translations[translations.js<br/>i18n Support]
+        Utils[utils.js<br/>Helper Functions]
+    end
+
+    subgraph "Models Layer"
+        UserModel[User Model<br/>Mongoose Schema]
+        ArticleModel[Article Model<br/>Mongoose Schema]
+        EventModel[Event Model<br/>Mongoose Schema]
+        CategoryModel[Category Model<br/>Mongoose Schema]
+    end
+
+    subgraph "Database Layer"
+        MongoDBCloud[(MongoDB Atlas<br/>Cloud Database)]
+        LocalMongoDB[(MongoDB Local<br/>Development)]
+    end
+
+    subgraph "Content Storage"
+        MDFiles[Markdown Files<br/>content/posts/*.md]
+    end
+
+    subgraph "Static Assets"
+        PublicFiles[Public Directory<br/>Images, Icons, Assets]
+    end
+
+    Browser --> Home
+    Browser --> Blog
+    Browser --> Events
+    Browser --> AdminLogin
+    Mobile --> Home
+    Mobile --> Blog
+
+    Home --> PostsAPI
+    Home --> CategoriesAPI
+    Blog --> PostsAPI
+    BlogPost --> PostsAPI
+    Events --> EventsAPI
+    EventDetail --> EventsAPI
+    Category --> CategoriesAPI
+
+    AdminDash --> AdminAPI
+    AdminArticles --> AdminAPI
+    AdminEvents --> AdminAPI
+    AdminLogin --> AuthAPI
+
+    AuthAPI --> Auth
+    AdminAPI --> Auth
+    PostsAPI --> Posts
+    EventsAPI --> MongoDB
+    CategoriesAPI --> MongoDB
+
+    Auth --> UserModel
+    Posts --> ArticleModel
+    MongoDB --> UserModel
+    MongoDB --> ArticleModel
+    MongoDB --> EventModel
+    MongoDB --> CategoryModel
+
+    UserModel --> MongoDBCloud
+    ArticleModel --> MongoDBCloud
+    EventModel --> MongoDBCloud
+    CategoryModel --> MongoDBCloud
+
+    UserModel -.-> LocalMongoDB
+    ArticleModel -.-> LocalMongoDB
+    EventModel -.-> LocalMongoDB
+    CategoryModel -.-> LocalMongoDB
+
+    Posts --> MDFiles
+    BlogPost --> MDFiles
+    Markdown --> MDFiles
+
+    Home --> PublicFiles
+    Blog --> PublicFiles
+    Events --> PublicFiles
+
+    Home --> Hero
+    Home --> FeaturedCat
+    Home --> LatestArticles
+    Home --> ToolsShowcase
+    Home --> Newsletter
+
+    Blog --> Navbar
+    Blog --> Footer
+    Events --> Navbar
+    Events --> Footer
+
+    BlogPost --> ArticleContent
+    BlogPost --> LanguageSwitcher
+
+    AdminDash --> AdminSidebar
+    AdminArticles --> AdminSidebar
+    AdminArticles --> RichTextEditor
+
+    ToolsShowcase --> SpatialModel
+    ToolsShowcase --> IDWVolume
+
+    ConditionalLayout --> ThemeProvider
+    ConditionalLayout --> LanguageProvider
+    ConditionalLayout --> AuthContext
+    ConditionalLayout --> AdminProvider
+
+    style Browser fill:#e3f2fd
+    style Mobile fill:#e3f2fd
+    style MongoDBCloud fill:#4caf50,color:#fff
+    style LocalMongoDB fill:#81c784
+    style MDFiles fill:#fff9c4
+    style PublicFiles fill:#fff9c4
+                </div>
+            </div>
+
+            <!-- Component Hierarchy -->
+            <div class="diagram-section">
+                <h2>🧩 Component Hierarchy Diagram</h2>
+                <p>Hierarki komponen React dari Root Layout hingga Feature Components, menunjukkan bagaimana providers dan layouts membungkus komponen-komponen aplikasi.</p>
+                <div class="mermaid">
+graph TD
+    subgraph "Root Layout"
+        RootLayout[app/layout.js]
+    end
+
+    subgraph "Providers Wrapper"
+        ThemeP[ThemeProvider]
+        LangP[LanguageProvider]
+        AuthP[AuthContext]
+        AdminP[AdminProvider]
+    end
+
+    subgraph "Layout Wrapper"
+        CondLayout[ConditionalLayout]
+        Nav[Navbar]
+        Main[Main Content]
+        Foot[Footer]
+    end
+
+    subgraph "Page Components"
+        HomePage[Home Page]
+        BlogPage[Blog Page]
+        EventsPage[Events Page]
+        AdminPage[Admin Pages]
+    end
+
+    subgraph "Feature Components"
+        HeroC[Hero]
+        CatC[Categories]
+        ArticlesC[Articles]
+        Tools[Tools Showcase]
+        News[Newsletter]
+        Editor[Rich Text Editor]
+        3D[3D Visualizations]
+    end
+
+    RootLayout --> ThemeP
+    ThemeP --> LangP
+    LangP --> AuthP
+    AuthP --> AdminP
+    AdminP --> CondLayout
+    
+    CondLayout --> Nav
+    CondLayout --> Main
+    CondLayout --> Foot
+    
+    Main --> HomePage
+    Main --> BlogPage
+    Main --> EventsPage
+    Main --> AdminPage
+    
+    HomePage --> HeroC
+    HomePage --> CatC
+    HomePage --> ArticlesC
+    HomePage --> Tools
+    HomePage --> News
+    
+    AdminPage --> Editor
+    Tools --> 3D
+
+    style RootLayout fill:#1976d2,color:#fff
+    style CondLayout fill:#1976d2,color:#fff
+    style ThemeP fill:#9c27b0,color:#fff
+    style LangP fill:#9c27b0,color:#fff
+    style AuthP fill:#9c27b0,color:#fff
+    style AdminP fill:#9c27b0,color:#fff
+                </div>
+            </div>
+
+            <!-- Data Flow -->
+            <div class="diagram-section">
+                <h2>🔄 Data Flow Diagram</h2>
+                <p>Sequence diagram menunjukkan alur data untuk 3 skenario: akses konten publik, autentikasi admin, dan pembuatan artikel oleh admin.</p>
+                <div class="mermaid">
+sequenceDiagram
+    participant User
+    participant Browser
+    participant NextJS as Next.js Server
+    participant API as API Routes
+    participant Auth as Auth Library
+    participant Models as Mongoose Models
+    participant DB as MongoDB
+
+    Note over User,DB: Public Content Access Flow
+    User->>Browser: Request Homepage
+    Browser->>NextJS: GET /
+    NextJS->>API: Fetch latest posts
+    API->>Models: Query Articles
+    Models->>DB: Find recent articles
+    DB-->>Models: Return data
+    Models-->>API: Articles data
+    API-->>NextJS: JSON response
+    NextJS-->>Browser: Rendered HTML + Data
+    Browser-->>User: Display page
+
+    Note over User,DB: Admin Authentication Flow
+    User->>Browser: Submit login form
+    Browser->>API: POST /api/auth/login
+    API->>Auth: Validate credentials
+    Auth->>Models: Find user by email
+    Models->>DB: Query users collection
+    DB-->>Models: User data
+    Models-->>Auth: User object
+    Auth->>Auth: Compare password hash
+    Auth->>Auth: Generate JWT token
+    Auth-->>API: Token + user data
+    API-->>Browser: Set cookie + response
+    Browser-->>User: Redirect to dashboard
+
+    Note over User,DB: Admin Create Article Flow
+    User->>Browser: Submit new article
+    Browser->>API: POST /api/admin/articles
+    API->>Auth: Verify JWT token
+    Auth-->>API: User authorized
+    API->>Models: Create new article
+    Models->>DB: Insert document
+    DB-->>Models: Document created
+    Models-->>API: Article data
+    API-->>Browser: Success response
+    Browser-->>User: Show confirmation
+                </div>
+            </div>
+
+            <!-- Technology Stack -->
+            <div class="diagram-section">
+                <h2>⚙️ Technology Stack Diagram</h2>
+                <p>Teknologi dan library yang digunakan serta hubungan dependencies antar komponen teknologi.</p>
+                <div class="mermaid">
+graph LR
+    subgraph "Frontend"
+        React[React 18.3]
+        NextJS[Next.js 14<br/>App Router]
+        Tailwind[Tailwind CSS]
+        Framer[Framer Motion]
+    end
+
+    subgraph "3D & Visualization"
+        Three[Three.js]
+        R3F[React Three Fiber]
+        Plotly[Plotly.js]
+    end
+
+    subgraph "Content Processing"
+        GrayMatter[Gray Matter]
+        Remark[Remark]
+        Rehype[Rehype]
+        KaTeX[KaTeX<br/>Math Rendering]
+        Highlight[Highlight.js<br/>Code Syntax]
+    end
+
+    subgraph "Backend"
+        NodeJS[Node.js]
+        MongoDB[MongoDB/Mongoose]
+        JWT[JSON Web Tokens]
+        Bcrypt[Bcrypt.js]
+    end
+
+    subgraph "UI Components"
+        Lucide[Lucide Icons]
+        Heroicons[Heroicons]
+        ReactQuill[React Quill<br/>Rich Editor]
+    end
+
+    NextJS --> React
+    NextJS --> Tailwind
+    NextJS --> MongoDB
+    React --> Framer
+    React --> Three
+    React --> R3F
+    React --> Plotly
+    React --> Lucide
+    React --> Heroicons
+    React --> ReactQuill
+    NextJS --> GrayMatter
+    GrayMatter --> Remark
+    Remark --> Rehype
+    Rehype --> KaTeX
+    Rehype --> Highlight
+    NodeJS --> JWT
+    NodeJS --> Bcrypt
+    NodeJS --> MongoDB
+
+    style NextJS fill:#000,color:#fff
+    style React fill:#61dafb,color:#000
+    style MongoDB fill:#4caf50,color:#fff
+    style Tailwind fill:#38bdf8,color:#000
+                </div>
+            </div>
+
+            <!-- API Routes -->
+            <div class="diagram-section">
+                <h2>🔌 API Routes Structure</h2>
+                <p>Struktur endpoint API yang tersedia, dibagi menjadi authentication, public endpoints, dan protected admin endpoints.</p>
+                <div class="mermaid">
+graph TD
+    API[API Routes<br/>/api]
+
+    subgraph "Authentication"
+        Login[POST /api/auth/login<br/>User login]
+        Register[POST /api/auth/register<br/>User registration]
+        Logout[POST /api/auth/logout<br/>Clear session]
+        Me[GET /api/auth/me<br/>Current user info]
+    end
+
+    subgraph "Public Endpoints"
+        GetPosts[GET /api/posts<br/>List all posts]
+        GetPost[GET /api/posts/[slug]<br/>Single post]
+        GetEvents[GET /api/events<br/>List all events]
+        GetEvent[GET /api/events/[slug]<br/>Single event]
+        GetCategories[GET /api/categories<br/>List categories]
+    end
+
+    subgraph "Admin Endpoints (Protected)"
+        AdminArticles[/api/admin/articles<br/>CRUD Articles]
+        AdminArticleId[/api/admin/articles/[id]<br/>Single Article CRUD]
+        AdminEvents[/api/admin/events<br/>CRUD Events]
+        AdminEventId[/api/admin/events/[id]<br/>Single Event CRUD]
+    end
+
+    API --> Login
+    API --> Register
+    API --> Logout
+    API --> Me
+    API --> GetPosts
+    API --> GetPost
+    API --> GetEvents
+    API --> GetEvent
+    API --> GetCategories
+    API --> AdminArticles
+    API --> AdminArticleId
+    API --> AdminEvents
+    API --> AdminEventId
+
+    style API fill:#ff9800,color:#fff
+    style Login fill:#2196f3,color:#fff
+    style Register fill:#2196f3,color:#fff
+    style AdminArticles fill:#f44336,color:#fff
+    style AdminEvents fill:#f44336,color:#fff
+                </div>
+            </div>
+
+            <!-- Database Schema -->
+            <div class="diagram-section">
+                <h2>💾 Database Schema</h2>
+                <p>Entity Relationship Diagram menunjukkan struktur database MongoDB dengan collections dan relationships antar entities.</p>
+                <div class="mermaid">
+erDiagram
+    USER ||--o{ ARTICLE : creates
+    USER ||--o{ EVENT : creates
+    ARTICLE }o--|| CATEGORY : belongs_to
+    
+    USER {
+        ObjectId _id PK
+        string email UK
+        string password
+        string name
+        string role
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    ARTICLE {
+        ObjectId _id PK
+        string title
+        string slug UK
+        string content
+        string excerpt
+        string coverImage
+        ObjectId author FK
+        string category
+        array tags
+        boolean published
+        datetime publishedAt
+        int views
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    EVENT {
+        ObjectId _id PK
+        string title
+        string slug UK
+        string description
+        string location
+        datetime startDate
+        datetime endDate
+        string organizer
+        string registrationUrl
+        string image
+        array tags
+        boolean published
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    CATEGORY {
+        ObjectId _id PK
+        string name UK
+        string slug UK
+        string description
+        string icon
+        int order
+        datetime createdAt
+        datetime updatedAt
+    }
+                </div>
+            </div>
+
+            <!-- Deployment -->
+            <div class="diagram-section">
+                <h2>🚀 Deployment Architecture</h2>
+                <p>Arsitektur deployment dari development environment hingga production, termasuk CI/CD pipeline dan external services.</p>
+                <div class="mermaid">
+graph TB
+    subgraph "Development"
+        DevLocal[Local Development<br/>npm run dev]
+        DevMongo[MongoDB Local]
+    end
+
+    subgraph "Version Control"
+        Git[Git Repository<br/>GitHub/GitLab]
+    end
+
+    subgraph "CI/CD Pipeline"
+        Build[Build Process<br/>npm run build]
+        Test[Testing & Linting<br/>npm run lint]
+        Deploy[Deployment]
+    end
+
+    subgraph "Production Environment"
+        Vercel[Vercel Platform<br/>Next.js Hosting]
+        MongoAtlas[(MongoDB Atlas<br/>Cloud Database)]
+        CDN[Vercel CDN<br/>Static Assets]
+    end
+
+    subgraph "External Services"
+        Email[Email Service<br/>Newsletter]
+        Analytics[Analytics<br/>Optional]
+    end
+
+    DevLocal --> Git
+    DevLocal -.-> DevMongo
+    Git --> Build
+    Build --> Test
+    Test --> Deploy
+    Deploy --> Vercel
+    Vercel --> MongoAtlas
+    Vercel --> CDN
+    Vercel -.-> Email
+    Vercel -.-> Analytics
+
+    style Vercel fill:#000,color:#fff
+    style MongoAtlas fill:#4caf50,color:#fff
+    style Git fill:#f05032,color:#fff
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="diagram-section">
+                <h2>🔒 Security Measures</h2>
+                <p>Layer keamanan aplikasi untuk melindungi resources dan data sensitif.</p>
+                <div class="mermaid">
+graph LR
+    subgraph "Security Layers"
+        JWT[JWT Authentication]
+        Hash[Password Hashing<br/>Bcrypt]
+        Env[Environment Variables<br/>.env]
+        CORS[CORS Configuration]
+        Validation[Input Validation]
+    end
+
+    subgraph "Protected Resources"
+        AdminRoutes[Admin Routes]
+        AdminAPI[Admin API]
+        Database[Database Access]
+    end
+
+    JWT --> AdminRoutes
+    JWT --> AdminAPI
+    Hash --> Database
+    Env --> Database
+    CORS --> AdminAPI
+    Validation --> AdminAPI
+    Validation --> Database
+
+    style JWT fill:#f44336,color:#fff
+    style Hash fill:#f44336,color:#fff
+    style Env fill:#ff9800,color:#fff
+                </div>
+            </div>
+
+            <!-- Tech Stack Detail -->
+            <div class="diagram-section">
+                <h2>📦 Technology Stack Details</h2>
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <h3>Frontend Framework</h3>
+                        <ul>
+                            <li>Next.js 14 (App Router)</li>
+                            <li>React 18.3</li>
+                            <li>Tailwind CSS</li>
+                            <li>Framer Motion</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3>Backend & Database</h3>
+                        <ul>
+                            <li>Node.js Runtime</li>
+                            <li>MongoDB Atlas</li>
+                            <li>Mongoose ODM</li>
+                            <li>JWT Authentication</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3>3D & Visualization</h3>
+                        <ul>
+                            <li>Three.js</li>
+                            <li>React Three Fiber</li>
+                            <li>Plotly.js</li>
+                            <li>WebGL Rendering</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3>Content Processing</h3>
+                        <ul>
+                            <li>Gray Matter</li>
+                            <li>Remark & Rehype</li>
+                            <li>KaTeX (Math)</li>
+                            <li>Highlight.js (Code)</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3>UI Components</h3>
+                        <ul>
+                            <li>Lucide React Icons</li>
+                            <li>Heroicons</li>
+                            <li>React Quill Editor</li>
+                            <li>Custom Components</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card">
+                        <h3>Features</h3>
+                        <ul>
+                            <li>Multi-Language (10 langs)</li>
+                            <li>Dark/Light Theme</li>
+                            <li>SEO Optimized</li>
+                            <li>Admin CMS Panel</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Features -->
+            <div class="diagram-section">
+                <h2>✨ Key Features & Modules</h2>
+                <div class="tech-grid">
+                    <div class="tech-card" style="border-left-color: #f44336;">
+                        <h3>🔐 Authentication & Authorization</h3>
+                        <ul>
+                            <li>JWT-based authentication</li>
+                            <li>Bcrypt password hashing</li>
+                            <li>Protected admin routes</li>
+                            <li>Session management</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card" style="border-left-color: #4caf50;">
+                        <h3>📝 Content Management</h3>
+                        <ul>
+                            <li>Markdown file support</li>
+                            <li>MongoDB dynamic content</li>
+                            <li>Rich text editor</li>
+                            <li>Image management</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card" style="border-left-color: #2196f3;">
+                        <h3>🌐 Multi-Language Support</h3>
+                        <ul>
+                            <li>10 languages supported</li>
+                            <li>Auto-detection</li>
+                            <li>LocalStorage persistence</li>
+                            <li>Translation system</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card" style="border-left-color: #ff9800;">
+                        <h3>🎨 3D Visualizations</h3>
+                        <ul>
+                            <li>Spatial Model Viewer</li>
+                            <li>IDW Volume Calculator</li>
+                            <li>Interactive tools</li>
+                            <li>Geological modeling</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card" style="border-left-color: #9c27b0;">
+                        <h3>🔍 SEO Optimization</h3>
+                        <ul>
+                            <li>Dynamic metadata</li>
+                            <li>OpenGraph tags</li>
+                            <li>Structured data (JSON-LD)</li>
+                            <li>Sitemap & robots.txt</li>
+                        </ul>
+                    </div>
+                    <div class="tech-card" style="border-left-color: #00bcd4;">
+                        <h3>⚡ Performance</h3>
+                        <ul>
+                            <li>Server Components</li>
+                            <li>Code splitting</li>
+                            <li>Image optimization</li>
+                            <li>CDN distribution</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <h3 style="margin-bottom: 15px;">📁 Project File Structure</h3>
+            <p style="opacity: 0.9; max-width: 800px; margin: 0 auto;">
+                <code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">app/</code> Pages & API Routes • 
+                <code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">components/</code> React Components • 
+                <code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">lib/</code> Utilities & Helpers • 
+                <code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">content/</code> Markdown Files • 
+                <code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">public/</code> Static Assets
+            </p>
+            <p style="margin-top: 20px; opacity: 0.8;">
+                Built with ❤️ using Next.js 14, MongoDB, React 18, Three.js & Tailwind CSS
+            </p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                Generated on January 31, 2026
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#667eea',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#5568d3',
+                lineColor: '#5568d3',
+                secondaryColor: '#764ba2',
+                tertiaryColor: '#f8f9fa'
+            },
+            flowchart: {
+                curve: 'basis',
+                padding: 20
+            },
+            sequence: {
+                diagramMarginX: 20,
+                diagramMarginY: 20,
+                actorMargin: 100,
+                width: 200,
+                height: 65,
+                boxMargin: 15,
+                boxTextMargin: 5,
+                noteMargin: 15,
+                messageMargin: 45
+            }
+        });
+    </script>
+</body>
+</html>

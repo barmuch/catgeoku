@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthContext';
 import Link from 'next/link';
@@ -17,23 +17,11 @@ export default function ArticlesListPage() {
     page: 1,
     limit: 10,
     search: '',
-    categoryId: '',
+    category: '',
     published: '',
   });
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/admin/login');
-      return;
-    }
-
-    if (user) {
-      fetchArticles();
-      fetchCategories();
-    }
-  }, [user, authLoading, filters]);
-
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -62,11 +50,11 @@ export default function ArticlesListPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, getAuthHeaders]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
-      const response = await fetch('/api/admin/categories');
+      const response = await fetch('/api/categories');
       const data = await response.json();
 
       if (response.ok) {
@@ -75,7 +63,19 @@ export default function ArticlesListPage() {
     } catch (err) {
       console.error('Error fetching categories:', err);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/admin/login');
+      return;
+    }
+
+    if (user) {
+      fetchArticles();
+      fetchCategories();
+    }
+  }, [authLoading, fetchArticles, fetchCategories, filters, router, user]);
 
   const handleDelete = async (id, title) => {
     if (!confirm(`Are you sure you want to delete "${title}"?`)) {
@@ -106,6 +106,19 @@ export default function ArticlesListPage() {
       [key]: value,
       page: key !== 'page' ? 1 : value,
     }));
+  };
+
+  const getCategoryLabel = (categoryValue) => {
+    if (!categoryValue) return 'Uncategorized';
+
+    // Backwards compatibility: some responses may still send an object.
+    if (typeof categoryValue === 'object') {
+      return categoryValue?.name || categoryValue?.slug || 'Uncategorized';
+    }
+
+    const slug = String(categoryValue);
+    const match = categories.find((c) => c.slug === slug);
+    return match?.name || slug;
   };
 
   if (authLoading || !user) {
@@ -140,13 +153,13 @@ export default function ArticlesListPage() {
           />
           
           <select
-            value={filters.categoryId}
-            onChange={(e) => handleFilterChange('categoryId', e.target.value)}
+            value={filters.category}
+            onChange={(e) => handleFilterChange('category', e.target.value)}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           >
             <option value="">All Categories</option>
             {categories.map(cat => (
-              <option key={cat.id || cat._id} value={cat.id || cat._id}>
+              <option key={cat.slug} value={cat.slug}>
                 {cat.name}
               </option>
             ))}
@@ -196,7 +209,7 @@ export default function ArticlesListPage() {
           </svg>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No articles found</h3>
           <p className="text-gray-500 dark:text-gray-400 mb-4">
-            {filters.search || filters.categoryId || filters.published
+            {filters.search || filters.category || filters.published
               ? 'Try adjusting your filters'
               : 'Get started by creating your first article'}
           </p>
@@ -246,7 +259,7 @@ export default function ArticlesListPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                        {article.category?.name || 'Uncategorized'}
+                        {getCategoryLabel(article.category)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">

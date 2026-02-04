@@ -6,6 +6,7 @@ import { markdownToHtml, generateMetadata as generatePostMetadata, generateStruc
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, Tag } from 'lucide-react'
 import 'katex/dist/katex.min.css'
 import 'highlight.js/styles/github-dark.css'
+import nextDynamic from 'next/dynamic'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -34,6 +35,7 @@ export default async function PostPage({ params }) {
   const relatedPosts = await getRelatedPosts(post.slug, post.category)
   const structuredData = generateStructuredData(post)
 
+  const ArticleContent = nextDynamic(() => import('@/components/common/ArticleContent'), { ssr: false })
   return (
     <>
       <script
@@ -103,19 +105,7 @@ export default async function PostPage({ params }) {
           </div>
 
           {/* Article Content */}
-          <div 
-            className="prose prose-lg dark:prose-invert max-w-none
-              prose-headings:font-display prose-headings:font-bold
-              prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
-              prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
-              prose-p:text-primary-700 dark:prose-p:text-primary-300 prose-p:leading-relaxed
-              prose-a:text-accent-600 dark:prose-a:text-accent-400 prose-a:no-underline hover:prose-a:underline
-              prose-code:text-accent-600 dark:prose-code:text-accent-400 prose-code:bg-primary-100 dark:prose-code:bg-primary-800 prose-code:px-2 prose-code:py-1 prose-code:rounded
-              prose-pre:bg-primary-900 prose-pre:border prose-pre:border-primary-700
-              prose-img:rounded-2xl prose-img:shadow-lg
-              prose-blockquote:border-l-4 prose-blockquote:border-accent-500 prose-blockquote:bg-primary-50 dark:prose-blockquote:bg-primary-800 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg"
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
-          />
+          <ArticleContent content={contentHtml} />
 
           {/* Tags */}
           {post.tags && post.tags.length > 0 && (

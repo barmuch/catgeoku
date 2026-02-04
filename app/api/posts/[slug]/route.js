@@ -11,9 +11,7 @@ export async function GET(request, { params }) {
     const article = await Article.findOne({ 
       slug,
       published: true,
-    })
-    .populate('categoryId', 'name slug icon')
-    .lean();
+    }).lean();
 
     if (!article) {
       return NextResponse.json(
@@ -26,12 +24,7 @@ export async function GET(request, { params }) {
     const formattedArticle = {
       ...article,
       id: article._id.toString(),
-      category: article.categoryId ? {
-        id: article.categoryId._id.toString(),
-        name: article.categoryId.name,
-        slug: article.categoryId.slug,
-        icon: article.categoryId.icon,
-      } : null,
+      category: article.category || null,
       tags: article.tags || [],
       date: article.createdAt,
       readTime: calculateReadTime(article.content),

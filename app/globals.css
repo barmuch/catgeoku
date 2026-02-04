@@ -147,6 +147,77 @@ pre code.hljs {
   font-size: 1.1em;
 }
 
+/* Rich Text Editor Image Alignment Support */
+/* Support for images with inline center alignment */
+.prose img[style*="margin-left: auto"][style*="margin-right: auto"],
+.prose img[style*="margin-left:auto"][style*="margin-right:auto"],
+.prose img[style*="margin: 0 auto"],
+.prose img[style*="margin:0 auto"],
+.prose img[style*="margin: auto"],
+.prose img[style*="margin:auto"],
+.article-content img[style*="margin-left: auto"][style*="margin-right: auto"],
+.article-content img[style*="margin-left:auto"][style*="margin-right:auto"],
+.article-content img[style*="margin: 0 auto"],
+.article-content img[style*="margin:0 auto"],
+.article-content img[style*="margin: auto"],
+.article-content img[style*="margin:auto"],
+.article-content-wrapper img[style*="margin-left: auto"][style*="margin-right: auto"],
+.article-content-wrapper img[style*="margin-left:auto"][style*="margin-right:auto"],
+.article-content-wrapper img[style*="margin: 0 auto"],
+.article-content-wrapper img[style*="margin:0 auto"],
+.article-content-wrapper img[style*="margin: auto"],
+.article-content-wrapper img[style*="margin:auto"] {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Support for Quill editor alignment classes */
+.prose .ql-align-center,
+.article-content .ql-align-center,
+.article-content-wrapper .ql-align-center {
+  text-align: center;
+}
+
+.prose .ql-align-center img,
+.prose p.ql-align-center img,
+.article-content .ql-align-center img,
+.article-content p.ql-align-center img,
+.article-content-wrapper .ql-align-center img,
+.article-content-wrapper p.ql-align-center img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.prose .ql-align-right,
+.article-content .ql-align-right,
+.article-content-wrapper .ql-align-right {
+  text-align: right;
+}
+
+.prose .ql-align-right img,
+.article-content .ql-align-right img,
+.article-content-wrapper .ql-align-right img {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.prose .ql-align-left,
+.article-content .ql-align-left,
+.article-content-wrapper .ql-align-left {
+  text-align: left;
+}
+
+.prose .ql-align-left img,
+.article-content .ql-align-left img,
+.article-content-wrapper .ql-align-left img {
+  display: block;
+  margin-left: 0;
+  margin-right: auto;
+}
+
 /* Loading animation */
 @keyframes shimmer {
   0% {
