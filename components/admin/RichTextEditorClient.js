@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Node } from '@tiptap/core';
+import { Extension, Node } from '@tiptap/core';
 import { EditorContent, NodeViewWrapper, ReactNodeViewRenderer, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -17,6 +17,8 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Code,
+  Code2,
   Eraser,
   Heading2,
   Image as ImageIcon,
@@ -24,8 +26,12 @@ import {
   Link2,
   List,
   ListOrdered,
+  Quote,
+  Redo2,
   Sigma,
   Strikethrough,
+  Minus,
+  Undo2,
   Underline as UnderlineIcon,
   X,
 } from 'lucide-react';
@@ -77,6 +83,69 @@ const FORMULA_TEMPLATES = [
     note: 'Teks di dalam rumus',
   },
 ];
+
+const LINE_HEIGHT_OPTIONS = [
+  { label: 'Auto', value: null },
+  { label: '0.25', value: '0.25' },
+  { label: '0.5', value: '0.5' },
+  { label: '1.0', value: '1' },
+  { label: '1.15', value: '1.15' },
+  { label: '1.5', value: '1.5' },
+  { label: '2.0', value: '2' },
+  { label: '2.5', value: '2.5' },
+];
+
+const LineHeight = Extension.create({
+  name: 'lineHeight',
+  addOptions() {
+    return {
+      types: ['paragraph', 'heading'],
+    };
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          lineHeight: {
+            default: null,
+            parseHTML: (element) => {
+              const lh = element.style?.lineHeight;
+              return lh || null;
+            },
+            renderHTML: (attrs) => {
+              if (!attrs.lineHeight) return {};
+              return { style: `line-height:${attrs.lineHeight};` };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setLineHeight:
+        (lineHeight) =>
+        ({ commands }) => {
+          if (!lineHeight) return false;
+          let ok = false;
+          for (const type of this.options.types) {
+            ok = commands.updateAttributes(type, { lineHeight }) || ok;
+          }
+          return ok;
+        },
+      unsetLineHeight:
+        () =>
+        ({ commands }) => {
+          let ok = false;
+          for (const type of this.options.types) {
+            ok = commands.updateAttributes(type, { lineHeight: null }) || ok;
+          }
+          return ok;
+        },
+    };
+  },
+});
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -245,13 +314,14 @@ const KatexInline = Node.create({
   },
 });
 
-function ToolbarButton({ active, disabled, onClick, children, title }) {
+function ToolbarButton({ active, disabled, onClick, children, title, variant = 'icon' }) {
   return (
     <button
       type="button"
       title={title}
       onClick={onClick}
       disabled={disabled}
+      data-variant={variant}
       className={
         'tiptap-btn ' +
         (active ? 'tiptap-btn-active ' : '') +
@@ -271,6 +341,10 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
   const [formulaLatex, setFormulaLatex] = useState('');
   const [formulaDisplayMode, setFormulaDisplayMode] = useState(false);
   const formulaInputRef = useRef(null);
+  const [spaceOpen, setSpaceOpen] = useState(false);
+  const spaceWrapRef = useRef(null);
+
+  const [, forceToolbarUpdate] = useState(0);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -279,6 +353,7 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
       Underline,
       TextStyle,
       Color,
+      LineHeight,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -318,6 +393,38 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
       lastHtmlRef.current = next;
     }
   }, [editor, value]);
+
+  useEffect(() => {
+    if (!editor) return;
+    const tick = () => forceToolbarUpdate((x) => x + 1);
+    editor.on('selectionUpdate', tick);
+    editor.on('transaction', tick);
+    return () => {
+      editor.off('selectionUpdate', tick);
+      editor.off('transaction', tick);
+    };
+  }, [editor]);
+
+  useEffect(() => {
+    if (!spaceOpen) return;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setSpaceOpen(false);
+    };
+
+    const onPointerDownCapture = (e) => {
+      const wrap = spaceWrapRef.current;
+      if (!wrap) return;
+      if (!wrap.contains(e.target)) setSpaceOpen(false);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    // Capture phase so the dropdown closes but other toolbar clicks still work.
+    window.addEventListener('pointerdown', onPointerDownCapture, true);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('pointerdown', onPointerDownCapture, true);
+    };
+  }, [spaceOpen]);
 
   useEffect(() => {
     if (!formulaOpen) return;
@@ -466,6 +573,21 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }, [editor]);
 
+  const insertHorizontalRule = useCallback(() => {
+    if (!editor) return;
+    editor.chain().focus().setHorizontalRule().run();
+  }, [editor]);
+
+  const currentLineHeight = editor
+    ? editor.getAttributes('paragraph')?.lineHeight || editor.getAttributes('heading')?.lineHeight || null
+    : null;
+
+  const currentLineHeightLabel = useMemo(() => {
+    if (!currentLineHeight) return 'Auto';
+    const match = LINE_HEIGHT_OPTIONS.find((o) => o.value === String(currentLineHeight));
+    return match?.label || String(currentLineHeight);
+  }, [currentLineHeight]);
+
   if (!editor) {
     return (
       <div className="w-full h-64 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse flex items-center justify-center">
@@ -477,6 +599,23 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
   return (
     <div className="rich-text-editor">
       <div className="tiptap-toolbar">
+        <div className="tiptap-group" aria-label="History">
+          <ToolbarButton
+            title="Undo"
+            disabled={!editor.can().undo()}
+            onClick={() => editor.chain().focus().undo().run()}
+          >
+            <Undo2 size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            title="Redo"
+            disabled={!editor.can().redo()}
+            onClick={() => editor.chain().focus().redo().run()}
+          >
+            <Redo2 size={16} />
+          </ToolbarButton>
+        </div>
+
         <div className="tiptap-group" aria-label="Formatting">
           <ToolbarButton title="Bold" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
             <Bold size={16} />
@@ -490,6 +629,9 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
           <ToolbarButton title="Strike" active={editor.isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()}>
             <Strikethrough size={16} />
           </ToolbarButton>
+          <ToolbarButton title="Inline Code" active={editor.isActive('code')} onClick={() => editor.chain().focus().toggleCode().run()}>
+            <Code size={16} />
+          </ToolbarButton>
         </div>
 
         <div className="tiptap-group" aria-label="Blocks">
@@ -501,6 +643,15 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
           </ToolbarButton>
           <ToolbarButton title="Numbered List" active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
             <ListOrdered size={16} />
+          </ToolbarButton>
+          <ToolbarButton title="Blockquote" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+            <Quote size={16} />
+          </ToolbarButton>
+          <ToolbarButton title="Code Block" active={editor.isActive('codeBlock')} onClick={() => editor.chain().focus().toggleCodeBlock().run()}>
+            <Code2 size={16} />
+          </ToolbarButton>
+          <ToolbarButton title="Horizontal Rule" onClick={insertHorizontalRule}>
+            <Minus size={16} />
           </ToolbarButton>
         </div>
 
@@ -514,6 +665,49 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
           <ToolbarButton title="Align Right" active={editor.isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()}>
             <AlignRight size={16} />
           </ToolbarButton>
+        </div>
+
+        <div className="tiptap-group" aria-label="Line Spacing">
+          <div className="tiptap-space" ref={spaceWrapRef}>
+            <button
+              type="button"
+              className={spaceOpen ? 'tiptap-space-btn open' : 'tiptap-space-btn'}
+              onClick={() => setSpaceOpen((v) => !v)}
+              title="Line spacing"
+            >
+              <span className="tiptap-space-label">Space</span>
+              <span className="tiptap-space-value">{currentLineHeightLabel}</span>
+            </button>
+
+            {spaceOpen && (
+              <>
+                <div className="tiptap-space-menu" role="menu" aria-label="Line spacing options">
+                  {LINE_HEIGHT_OPTIONS.map((o) => {
+                    const active = o.value === null ? !currentLineHeight : String(currentLineHeight) === o.value;
+                    return (
+                      <button
+                        key={o.label}
+                        type="button"
+                        role="menuitem"
+                        className={active ? 'tiptap-space-item active' : 'tiptap-space-item'}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => {
+                          if (o.value === null) {
+                            editor.chain().focus().unsetLineHeight().run();
+                          } else {
+                            editor.chain().focus().setLineHeight(o.value).run();
+                          }
+                          setSpaceOpen(false);
+                        }}
+                      >
+                        {o.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="tiptap-group" aria-label="Insert">
@@ -671,6 +865,8 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
           border-radius: 10px 10px 0 0;
           background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.86));
           backdrop-filter: blur(8px);
+          position: relative;
+          z-index: 40;
         }
 
         .dark .tiptap-toolbar {
@@ -706,6 +902,98 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
           transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
         }
 
+        .tiptap-btn[data-variant='text'] {
+          width: auto;
+          padding: 0 12px;
+          font-size: 12px;
+          font-weight: 700;
+        }
+
+        .tiptap-space {
+          position: relative;
+        }
+
+        .tiptap-space-btn {
+          height: 36px;
+          border-radius: 10px;
+          border: 1px solid rgb(209 213 219);
+          background: rgba(255, 255, 255, 0.95);
+          color: rgb(17 24 39);
+          padding: 0 12px;
+          font-size: 12px;
+          font-weight: 800;
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .dark .tiptap-space-btn {
+          background: rgba(30, 41, 59, 0.9);
+          border-color: rgb(71 85 105);
+          color: rgb(226 232 240);
+        }
+
+        .tiptap-space-btn:hover {
+          border-color: rgb(59 130 246);
+          box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08);
+          transform: translateY(-1px);
+        }
+
+        .tiptap-space-btn.open {
+          border-color: rgb(251 146 60);
+          box-shadow: 0 0 0 1px rgb(251 146 60);
+        }
+
+        .tiptap-space-label {
+          opacity: 0.9;
+        }
+
+        .tiptap-space-value {
+          opacity: 0.75;
+          font-weight: 900;
+        }
+
+        .tiptap-space-menu {
+          position: absolute;
+          top: calc(100% + 8px);
+          left: 0;
+          min-width: 160px;
+          border-radius: 12px;
+          border: 1px solid rgba(148, 163, 184, 0.35);
+          background: rgb(255 255 255);
+          box-shadow: 0 18px 60px rgba(2, 6, 23, 0.22);
+          padding: 6px;
+          z-index: 200;
+          isolation: isolate;
+        }
+
+        .dark .tiptap-space-menu {
+          background: rgb(15 23 42);
+          border-color: rgba(148, 163, 184, 0.22);
+        }
+
+        .tiptap-space-item {
+          width: 100%;
+          text-align: left;
+          padding: 10px 10px;
+          border-radius: 10px;
+          font-size: 13px;
+          font-weight: 800;
+          color: rgb(15 23 42);
+        }
+
+        .dark .tiptap-space-item {
+          color: rgb(226 232 240);
+        }
+
+        .tiptap-space-item:hover {
+          background: rgba(59, 130, 246, 0.12);
+        }
+
+        .tiptap-space-item.active {
+          background: rgba(251, 146, 60, 0.16);
+        }
+
         .dark .tiptap-btn {
           background: rgba(30, 41, 59, 0.9);
           border-color: rgb(71 85 105);
@@ -734,6 +1022,8 @@ export default function RichTextEditorClient({ value, onChange, placeholder }) {
 
         .tiptap-surface {
           border-radius: 0 0 8px 8px;
+          position: relative;
+          z-index: 0;
         }
 
         .tiptap-modal-overlay {
